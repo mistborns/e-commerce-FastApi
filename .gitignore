@@ -1,0 +1,25 @@
+# Bytecode
+__pycache__/
+*.py[cod]
+
+# Environment
+.env
+*.env
+
+# SQLite Database
+*.db
+
+# Alembic
+alembic/versions/
+
+# VS Code and editor settings
+.vscode/
+*.code-workspace
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Python virtual environment (if created inside project)
+venv/
+env/
