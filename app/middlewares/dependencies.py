@@ -23,8 +23,9 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise HTTPException(status_code=401, detail="Could not validate credentials")
 
 # role checking for certain apis
-def require_roles(required_roles: list, current_user: User = Depends(get_current_user)) -> User:
-    # authorization checks basically
-    if current_user.role not in required_roles:
-        raise HTTPException(status_code=403, detail="Insufficient permissions")
-    return current_user
+def require_roles(required_roles: list):
+    def checker(current_user: User = Depends(get_current_user)):
+        if current_user.role not in required_roles:
+            raise HTTPException(status_code=403, detail="Unauthorized")
+        return current_user
+    return checker  #  the actual dependency function
