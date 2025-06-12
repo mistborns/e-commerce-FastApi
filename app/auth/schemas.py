@@ -1,15 +1,28 @@
 from enum import Enum
-from pydantic import BaseModel , EmailStr, Field
+import re
+from pydantic import BaseModel , EmailStr, Field, field_validator
 
 class UserRole(str, Enum):
     admin = "admin"
     user = "user"
 
 class UserCreate(BaseModel):
-    name: str
+    name: str = Field(strip_whitespace=True, min_length=1)
     email: EmailStr
-    password: str
+    password: str = Field(..., min_length=8)
     role: UserRole = UserRole.user
+
+    @field_validator("password")
+    def strong_password(cls, value):
+        if not re.search(r"[A-Z]", value):
+            raise ValueError("Password must contain at least one uppercase letter")
+        if not re.search(r"[a-z]", value):
+            raise ValueError("Password must contain at least one lowercase letter")
+        if not re.search(r"[0-9]", value):
+            raise ValueError("Password must contain at least one digit")
+        if not re.search(r"[\W_]", value):
+            raise ValueError("Password must contain at least one special character")
+        return value
 
 class UserOut(BaseModel):
     name: str
@@ -23,7 +36,7 @@ class UserOut(BaseModel):
 
 class UserLogin(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(..., min_length=8)
 
 
 class ForgotPassword(BaseModel):
@@ -32,3 +45,15 @@ class ForgotPassword(BaseModel):
 class ResetPassword(BaseModel):
     token: str
     new_password: str = Field(..., min_length=8)
+
+    @field_validator('new_password')
+    def strong_password(cls, value):
+        if not re.search(r"[A-Z]", value):
+            raise ValueError("must have uppercase")
+        if not re.search(r"[a-z]", value):
+            raise ValueError("must have lowercase")
+        if not re.search(r"\d", value):
+            raise ValueError("must have digit")
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", value):
+            raise ValueError("must have special character")
+        return value 
