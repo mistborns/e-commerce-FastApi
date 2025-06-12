@@ -6,7 +6,7 @@ from app.products import models as product_models
 
 def add_to_cart(db : Session ,user_id : int, cart_item: schemas.CartItemCreate):
     
-    check_product = db.query(product_models.Product).filter_by(id == cart_item.product_id).first()
+    check_product = db.query(product_models.Product).filter(product_models.Product.id == cart_item.product_id).first()
     if not check_product:
         raise HTTPException(status_code=404, detail="Product not found")
     
@@ -16,36 +16,48 @@ def add_to_cart(db : Session ,user_id : int, cart_item: schemas.CartItemCreate):
     if cart_item.quantity > check_product.stock:
         raise HTTPException(status_code= status.HTTP_400_BAD_REQUEST , detail="quantity not available in stock")
     
-    existing = db.query(models.Cart).filter_by(user_id==user_id, models.Cart.product_id == cart_item.product_id).first()
+    existing = db.query(models.Cart).filter(models.Cart.user_id==user_id, models.Cart.product_id == cart_item.product_id).first()
     if existing:
         existing.quantity += cart_item.quantity
+        db.commit()
+        db.refresh(existing)
+        return existing
     else:
-        new_item = models.CartItem(user_id=user_id, **cart_item.model_dump)
+        new_item = models.Cart(
+            user_id=user_id,
+            product_id=cart_item.product_id,
+            quantity=cart_item.quantity
+            )
         db.add(new_item)
         db.commit()
-    return new_item
+        db.refresh(new_item)
+        return new_item
 
 def get_cart_items(db: Session ,user_id: int):
     cart_items = db.query(models.Cart).filter(models.Cart.user_id == user_id).all()
-    return cart_items
+    if not cart_items:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cart empty")
+    cart_items_list = [schemas.CartItemOut.model_validate(item, from_attributes=True) for item in cart_items]
+    return schemas.CartResponse(items=cart_items_list)
 
 
 
 def update_cart_item(db: Session, user_id: int, product_id: int, data: schemas.CartItemUpdate):
     try:
-        product = db.query(models.Product).filter_by(id=product_id).first()
+        product = db.query(product_models.Product).filter(product_models.Product.id == product_id).first()
         if not product:
             raise HTTPException(status_code=404, detail="Product not found")
         if data.quantity > product.stock:
             raise HTTPException(status_code=400, detail="Quantity exceeds available stock")
 
-        item = db.query(models.CartItem).filter_by(user_id=user_id, product_id=product_id).first()
+        item = db.query(models.Cart).filter_by(user_id=user_id, product_id=product_id).first()
         if not item:
             raise HTTPException(status_code=404, detail="Cart item not found")
 
         item.quantity = data.quantity
         db.commit()
-        return {"message": "Cart item updated"}
+        db.refresh(item)
+        return item
     except SQLAlchemyError:
         db.rollback()
         raise HTTPException(status_code=500, detail="Error updating cart item")
@@ -54,7 +66,7 @@ def update_cart_item(db: Session, user_id: int, product_id: int, data: schemas.C
 
 def delete_cart_item(db: Session, user_id: int, product_id: int):
     try:
-        item = db.query(models.CartItem).filter_by(user_id=user_id, product_id=product_id).first()
+        item = db.query(models.Cart).filter_by(user_id=user_id, product_id=product_id).first()
         if not item:
             raise HTTPException(status_code=404, detail="Cart item not found")
         db.delete(item)

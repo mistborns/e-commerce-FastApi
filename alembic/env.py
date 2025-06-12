@@ -22,6 +22,7 @@ from app.core.database import Base
 from app.auth import models as auth_models
 from app.products import models as product_models
 from app.cart import models as cart_models
+from app.orders import models as order_models
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

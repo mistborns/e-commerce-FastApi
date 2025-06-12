@@ -15,8 +15,10 @@ class CartItemOut(BaseModel):
         from_attributes=True
 
 class CartItemUpdate(BaseModel):
-    product_id: Optional[int] = None
     quantity: int
 
 class CartResponse(BaseModel):
     items: List[CartItemOut]
+
+    class Config:
+        from_attributes=True

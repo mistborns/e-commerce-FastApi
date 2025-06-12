@@ -1,10 +1,10 @@
 from sqlalchemy import Column, Integer, ForeignKey, Enum, Float, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
-from enum import Enum 
+import enum 
 from app.core.database import Base
 
-class OrderStatus(Enum):
+class OrderStatus(enum.Enum):
     pending = "pending"
     paid = "paid"
     cancelled = "cancelled"

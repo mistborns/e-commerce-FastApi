@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException
-from app import models, schemas
+from app.orders import models, schemas
 
 def get_orders_for_user(db: Session, user_id: int):
     try:
