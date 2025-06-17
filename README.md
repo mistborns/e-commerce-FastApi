@@ -35,7 +35,8 @@ ECOM_FASTAPI/
 │   │   └── services.py
 │   │
 │   ├── checkout/
-│   │   └── __init__.py              # (Assumed empty or placeholder module)
+│   │   ├── __init__.py
+│   │   └── routes.py          
 │   │
 │   ├── core/
 │   │   ├── __init__.py
@@ -68,10 +69,9 @@ ECOM_FASTAPI/
 │
 ├── logs/                            # Folder to store log files
 │
-├── .env                             # Environment variables (secrets, DB URI, etc.)
+├── .env                             # Environment variables 
 ├── .gitignore
 ├── alembic.ini                      # Alembic config file
-├── ecommerce.db                     # SQLite DB file (likely for local testing)
 ├── LICENSE
 ├── README.md
 └── requirements.txt                 # Python dependencies
