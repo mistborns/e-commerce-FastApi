@@ -1,7 +1,11 @@
+
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException, status
 from app.products import models, schemas
+from sqlalchemy import asc , desc
+from app.core.logger import logger
+
 
 def create_product(db: Session, product: schemas.ProductCreate):
     try:
@@ -9,27 +13,44 @@ def create_product(db: Session, product: schemas.ProductCreate):
         db.add(db_product)
         db.commit()
         db.refresh(db_product)
+        logger.info(f"Product created with ID {db_product.id}")
         return db_product
-    except SQLAlchemyError as e:
+    except HTTPException as http_exc:
+        raise http_exc
+    except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Error creating product")
+        logger.error(f"Error creating product: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
-def get_products(db: Session, skip: int = 0, limit: int = 10):
+def get_products(db: Session, page: int = 1, limit: int = 10):
     try:
+
+        skip = (page - 1) * limit
+
         total = db.query(models.Product).count()
+
         products = db.query(models.Product).offset(skip).limit(limit).all()
+
+        logger.info(f"Fetched every product")
         return {"total": total, "products": products}
-    except SQLAlchemyError:
-        raise HTTPException(status_code=500, detail="Error fetching products")
+    except HTTPException as http_exc:
+        raise http_exc
+    except Exception as e:
+        logger.error(f"Error fetching products: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 def get_product_by_Id(db: Session, product_id: int):
     try:
         product = db.query(models.Product).filter(models.Product.id == product_id).first()
         if not product:
+            logger.warning(f"Product with ID {product_id} not found")
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
         return product
-    except SQLAlchemyError:
-        raise HTTPException(status_code=500, detail="Error retrieving product")
+    except HTTPException as http_exc:
+        raise http_exc
+    except Exception as e:
+        logger.error(f"Error fetching product {product_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 def update_product(db: Session, product_id: int, product_data: schemas.ProductUpdate):
     try:
@@ -38,25 +59,43 @@ def update_product(db: Session, product_id: int, product_data: schemas.ProductUp
             setattr(product, key, value)
         db.commit()
         db.refresh(product)
+        logger.info(f"Product {product_id} updated")
         return product
-    except SQLAlchemyError:
+    except HTTPException as http_exc:
+        raise http_exc
+    except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Error updating product")
+        logger.error(f"Error updating product {product_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 def delete_product(db: Session, product_id: int):
     try:
         product = get_product_by_Id(db, product_id)
         db.delete(product)
         db.commit()
+        logger.info(f"Product {product_id} deleted")
         return {"detail": "Product deleted successfully"}
-    except SQLAlchemyError:
+    
+    except HTTPException as http_exc:
+        raise http_exc
+    except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=500, detail="Error deleting product")
+        logger.error(f"Error deleting product {product_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 def search_products(db: Session, keyword: str):
     try:
-        return db.query(models.Product).filter(models.Product.name.ilike(f"%{keyword}%")).all()
-    except SQLAlchemyError:
+        results = db.query(models.Product).filter(models.Product.name.ilike(f"%{keyword}%")).all()
+
+        if not results:
+            raise HTTPException(status_code=404, detail=f"Product with {keyword} keyword not foubnd")
+        logger.info(f"Search for '{keyword}' returned {len(results)} results")
+        return results
+    
+    except HTTPException as http_exc:
+        raise http_exc
+    except Exception as e:
+        logger.error(f"Error searching products with keyword '{keyword}': {str(e)}")
         raise HTTPException(status_code=500, detail="Error searching products")
 
 def filter_products(db: Session, category: str = None, min_price: float = None, max_price: float = None,
@@ -71,13 +110,21 @@ def filter_products(db: Session, category: str = None, min_price: float = None, 
         if max_price is not None:
             query = query.filter(models.Product.price <= max_price)
 
-        if sort_by in ["price", "name", "stock"]:
-            query = query.order_by(getattr(models.Product, sort_by))
+        if sort_by == "price_asc":
+            query = query.order_by(asc(models.Product.price))
+        elif sort_by == "price_desc":
+            query = query.order_by(desc(models.Product.price))
+
 
         total = query.count()
-        offset = (page - 1) * page_size
-        products = query.offset(offset).limit(page_size).all()
-        return {"total": total, "products": products}
-    except SQLAlchemyError:
-        raise HTTPException(status_code=500, detail="Error filtering products")
+        skip = (page - 1) * page_size
+        products = query.offset(skip).limit(page_size).all()
 
+        logger.info(f"Filtered products: total={total}, returned={len(products)}, page={page}, category={category}")
+        return {"total": total, "products": products}
+    
+    except HTTPException as http_exc:
+        raise http_exc
+    except Exception as e:
+        logger.error(f"Error filtering products: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")

@@ -4,11 +4,11 @@ from typing import Optional, List
 
 class ProductBase(BaseModel):
     name: str = Field(..., min_length=1, strip_whitespace=True)
-    description: Optional[str] 
+    description: Optional[str] = None
     price: float = Field(..., gt=0)
     stock: int = Field(..., ge=0)
     category: str = Field(..., min_length=1, strip_whitespace=True)
-    image_url: Optional[HttpUrl] = None
+    image_url: Optional[str] = None
 
 
 class ProductCreate(ProductBase):
@@ -16,11 +16,11 @@ class ProductCreate(ProductBase):
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, strip_whitespace=True)
-    description: Optional[str] 
+    description: Optional[str] = None
     price: Optional[float] = Field(None, gt=0)
     stock: Optional[int] = Field(None, ge=0)
     category: Optional[str] = Field(None, min_length=1, strip_whitespace=True)
-    image_url: Optional[HttpUrl] = None
+    image_url: Optional[str] = None
 
     
 class ProductOut(ProductBase):

@@ -14,10 +14,10 @@ def create_product(product: schemas.ProductCreate, db: Session = Depends(get_db)
 
 
 @router.get("", response_model=schemas.ProductListResponse)
-def list_products(skip: int = 0, limit: int = 10, db: Session = Depends(get_db), 
+def list_products(page: int = 1, limit: int = 10, db: Session = Depends(get_db), 
                   current_user=Depends(require_roles(["admin"]))):
     
-    return services.get_products(db, skip, limit)
+    return services.get_products(db, page, limit)
 
 
 @router.get("/{product_id}", response_model=schemas.ProductOut)
