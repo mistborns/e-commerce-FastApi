@@ -4,6 +4,7 @@ from app.auth import schemas, models, utils
 from fastapi import HTTPException, status
 from app.core.logger import logger 
 
+# function creates a user in db
 def create_user(db: Session, user: schemas.UserCreate) -> dict:
     try:    
         db_user = db.query(models.User).filter(models.User.email == user.email).first()
@@ -29,7 +30,7 @@ def create_user(db: Session, user: schemas.UserCreate) -> dict:
         logger.error(f"Error creating user: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
-
+# authenticates user
 def authenticate_user(email: str, password: str, db: Session):
     try:    
         user = db.query(models.User).filter(models.User.email == email).first()
@@ -45,7 +46,7 @@ def authenticate_user(email: str, password: str, db: Session):
         logger.error(f"Error authenticating user: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
-
+# generates token for password reset / sends email
 def generate_reset_token(email: str, db: Session):
     try:    
         user = db.query(models.User).filter(models.User.email == email).first()
@@ -69,7 +70,7 @@ def generate_reset_token(email: str, db: Session):
         logger.error(f"Error generating reset token: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
-
+# validates reset token and actually resets password 
 def reset_user_password(data: schemas.ResetPassword,db: Session, ) -> dict:
     try:
         reset_token = db.query(models.PasswordResetToken).filter(models.PasswordResetToken.token == data.token).first()
