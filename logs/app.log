@@ -245,3 +245,6 @@ TypeError: Object of type ValueError is not JSON serializable
 [2025-06-17 20:26:17,785] INFO in services: Product 1 deleted
 [2025-06-17 20:27:33,297] INFO in services: User authenticated successfully: test1@gmail.com
 [2025-06-17 20:31:51,600] INFO in routes: User 1 placed order 1 successfully.
+[2025-06-17 22:28:22,493] WARNING in exception_handler: Validation error at http://127.0.0.1:8000/auth/signup: [{'type': 'value_error', 'loc': ('body', 'password'), 'msg': 'Value error, Password must contain at least one uppercase letter', 'input': 'password', 'ctx': {'error': ValueError('Password must contain at least one uppercase letter')}}]
+[2025-06-17 22:30:11,476] WARNING in exception_handler: Validation error at http://127.0.0.1:8000/auth/signup: [{'type': 'enum', 'loc': ('body', 'role'), 'msg': "Input should be 'admin' or 'user'", 'input': 'moderator', 'ctx': {'expected': "'admin' or 'user'"}}]
+[2025-06-17 22:30:39,298] INFO in services: New user created: hulk@gmail.com
