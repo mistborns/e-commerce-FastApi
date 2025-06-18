@@ -57,3 +57,10 @@ class ResetPassword(BaseModel):
         if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", value):
             raise ValueError("must have special character")
         return value 
+    
+class RefreshTokenRequest(BaseModel):
+    token: str
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"

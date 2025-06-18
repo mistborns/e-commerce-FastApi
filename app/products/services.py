@@ -8,8 +8,8 @@ from app.core.logger import logger
 
 
 def create_product(db: Session, product: schemas.ProductCreate):
-    try:
-        db_product = models.Product(**product.model_dump())
+    try:    #**obj.model_dump unpacks the dict and converts to kv pairs 
+        db_product = models.Product(**product.model_dump()) # model_dump converts pydantic models to dict 
         db.add(db_product)
         db.commit()
         db.refresh(db_product)

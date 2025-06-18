@@ -248,3 +248,130 @@ TypeError: Object of type ValueError is not JSON serializable
 [2025-06-17 22:28:22,493] WARNING in exception_handler: Validation error at http://127.0.0.1:8000/auth/signup: [{'type': 'value_error', 'loc': ('body', 'password'), 'msg': 'Value error, Password must contain at least one uppercase letter', 'input': 'password', 'ctx': {'error': ValueError('Password must contain at least one uppercase letter')}}]
 [2025-06-17 22:30:11,476] WARNING in exception_handler: Validation error at http://127.0.0.1:8000/auth/signup: [{'type': 'enum', 'loc': ('body', 'role'), 'msg': "Input should be 'admin' or 'user'", 'input': 'moderator', 'ctx': {'expected': "'admin' or 'user'"}}]
 [2025-06-17 22:30:39,298] INFO in services: New user created: hulk@gmail.com
+[2025-06-18 03:00:08,707] INFO in services: User authenticated successfully: test1@gmail.com
+[2025-06-18 03:00:34,914] INFO in services: User 1 has an empty cart.
+[2025-06-18 03:00:58,286] INFO in services: Added new product 2in user 1's cart.
+[2025-06-18 03:02:16,935] INFO in routes: User 1 placed order 2 successfully.
+[2025-06-18 03:03:19,131] WARNING in services: Order 6 not found for user 1
+[2025-06-18 03:11:33,674] INFO in services: User authenticated successfully: test1@gmail.com
+[2025-06-18 03:11:39,773] INFO in services: User authenticated successfully: test1@gmail.com
+[2025-06-18 03:12:24,716] INFO in services: Filtered products: total=1, returned=1, page=1, category=None
+[2025-06-18 03:46:38,222] INFO in services: User authenticated successfully: test1@gmail.com
+[2025-06-18 03:48:39,956] INFO in services: User 1 has an empty cart.
+[2025-06-18 03:49:37,915] WARNING in services: Password reset attempt for non-existing user: test@gmail.com
+[2025-06-18 03:51:29,538] INFO in services: Password reset link sent to: test1@gmail.com
+[2025-06-18 03:56:30,405] ERROR in exception_handler: Unhandled exception at http://localhost:8000/reset-password?token=9f99bf33-8974-4476-b2a7-c66ef7f93f3b: 404: Not Found
+Traceback (most recent call last):
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\routing.py", line 714, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\routing.py", line 764, in app
+    await self.default(scope, receive, send)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\routing.py", line 650, in not_found
+    raise HTTPException(status_code=404)
+starlette.exceptions.HTTPException: 404: Not Found
+[2025-06-18 03:57:07,273] ERROR in exception_handler: Unhandled exception at http://localhost:8000/reset-password?token=9f99bf33-8974-4476-b2a7-c66ef7f93f3b: 404: Not Found
+[2025-06-18 03:58:06,199] WARNING in exception_handler: Validation error at http://127.0.0.1:8000/auth/reset-password: [{'type': 'value_error', 'loc': ('body', 'new_password'), 'msg': 'Value error, must have uppercase', 'input': 'newpassword', 'ctx': {'error': ValueError('must have uppercase')}}]
+[2025-06-18 03:58:43,331] WARNING in exception_handler: Validation error at http://127.0.0.1:8000/auth/reset-password: [{'type': 'value_error', 'loc': ('body', 'new_password'), 'msg': 'Value error, must have uppercase', 'input': 'newpassword', 'ctx': {'error': ValueError('must have uppercase')}}]
+[2025-06-18 03:58:43,332] ERROR in exception_handler: Unhandled exception at http://127.0.0.1:8000/auth/reset-password: 'RequestValidationError' object has no attribute 'detail'
+Traceback (most recent call last):
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\fastapi\routing.py", line 346, in app
+    raise validation_error
+fastapi.exceptions.RequestValidationError: [{'type': 'value_error', 'loc': ('body', 'new_password'), 'msg': 'Value error, must have uppercase', 'input': 'newpassword', 'ctx': {'error': ValueError('must have uppercase')}}]
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\middleware\errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\middleware\exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\routing.py", line 714, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\routing.py", line 734, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\_exception_handler.py", line 59, in wrapped_app
+    response = await handler(conn, exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\app\core\exception_handler.py", line 24, in validation_exception_handler
+    "message": exc.detail,
+               ^^^^^^^^^^
+AttributeError: 'RequestValidationError' object has no attribute 'detail'
+[2025-06-18 03:59:07,747] WARNING in exception_handler: Validation error at http://127.0.0.1:8000/auth/reset-password: [{'type': 'value_error', 'loc': ('body', 'new_password'), 'msg': 'Value error, must have uppercase', 'input': 'newpassword', 'ctx': {'error': ValueError('must have uppercase')}}]
+[2025-06-18 03:59:29,195] INFO in services: Password reset successfully for user: test1@gmail.com
+[2025-06-18 03:59:59,380] INFO in services: Password reset link sent to: test1@gmail.com
+[2025-06-18 04:00:33,604] INFO in services: Password reset successfully for user: test1@gmail.com
+[2025-06-18 04:00:41,595] WARNING in services: authentication fail for email: test1@gmail.com
+[2025-06-18 04:00:41,599] ERROR in exception_handler: Unhandled exception at http://127.0.0.1:8000/auth/signin: 401: Invalid email or password
+[2025-06-18 04:00:47,790] INFO in services: User authenticated successfully: test1@gmail.com
+[2025-06-18 13:15:02,333] WARNING in exception_handler: Validation error at http://127.0.0.1:8000/auth/signup: [{'type': 'value_error', 'loc': ('body', 'password'), 'msg': 'Value error, Password must contain at least one digit', 'input': 'Password', 'ctx': {'error': ValueError('Password must contain at least one digit')}}]
+[2025-06-18 13:31:02,482] ERROR in exception_handler: Unhandled exception at http://127.0.0.1:8000/auth/signup: ValueError() takes no keyword arguments
+Traceback (most recent call last):
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\middleware\errors.py", line 165, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\middleware\exceptions.py", line 62, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\routing.py", line 714, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\routing.py", line 734, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\routing.py", line 288, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\routing.py", line 76, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\starlette\routing.py", line 73, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\fastapi\routing.py", line 291, in app
+    solved_result = await solve_dependencies(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\fastapi\dependencies\utils.py", line 666, in solve_dependencies
+    ) = await request_body_to_args(  # body_params checked above
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\fastapi\dependencies\utils.py", line 906, in request_body_to_args
+    v_, errors_ = _validate_value_with_model_field(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\fastapi\dependencies\utils.py", line 706, in _validate_value_with_model_field
+    v_, errors_ = field.validate(value, values, loc=loc)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\fastapi\_compat.py", line 129, in validate
+    self._type_adapter.validate_python(value, from_attributes=True),
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\env\Lib\site-packages\pydantic\type_adapter.py", line 421, in validate_python
+    return self.validator.validate_python(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Vinayak Khandelwal\Desktop\ecom_fastapi\app\auth\schemas.py", line 22, in strong_password
+    raise ValueError(detail="Password must contain at least one digit")
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: ValueError() takes no keyword arguments
+[2025-06-18 13:31:32,466] WARNING in exception_handler: Validation error at http://127.0.0.1:8000/auth/signup: [{'type': 'value_error', 'loc': ('body', 'password'), 'msg': 'Value error, Password must contain at least one digit', 'input': 'Password', 'ctx': {'error': ValueError('Password must contain at least one digit')}}]
+[2025-06-18 13:57:09,717] INFO in services: User authenticated successfully: test1@gmail.com
+[2025-06-18 13:57:38,061] INFO in services: Filtered products: total=1, returned=1, page=1, category=None
+[2025-06-18 13:58:24,252] INFO in services: Added new product 2in user 1's cart.
+[2025-06-18 13:58:39,112] INFO in services: Filtered products: total=1, returned=1, page=1, category=None
+[2025-06-18 13:58:58,905] INFO in routes: User 1 placed order 3 successfully.
+[2025-06-18 13:59:07,395] INFO in services: Filtered products: total=1, returned=1, page=1, category=None
+[2025-06-18 14:00:23,067] INFO in services: Filtered products: total=1, returned=1, page=1, category=None
+[2025-06-18 14:08:52,139] INFO in services: Filtered products: total=5, returned=5, page=1, category=None

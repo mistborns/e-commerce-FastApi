@@ -42,6 +42,7 @@ def add_to_cart(db : Session ,user_id : int, cart_item: schemas.CartItemCreate):
     except HTTPException as http_exc:
         raise http_exc
     except Exception as e:
+        db.rollback()
         logger.error(f"Error adding to cart : {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
@@ -52,8 +53,9 @@ def get_cart_items(db: Session ,user_id: int):
             logger.info(f"User {user_id} has an empty cart.")
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cart empty")
         
+        #converts the orm models objects in list (cart_items) to pydantic models(CartItemOut)
         cart_items_list = [schemas.CartItemOut.model_validate(item, from_attributes=True) for item in cart_items]
-        return schemas.CartResponse(items=cart_items_list)
+        return schemas.CartResponse(items=cart_items_list) 
     
     except HTTPException as http_exc:
         raise http_exc
@@ -113,13 +115,3 @@ def delete_cart_item(db: Session, user_id: int, product_id: int):
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
     
 
-# def clear_cart(db: Session, user_id: int):
-#     try:
-#         db.query(models.CartItem).filter_by(user_id=user_id).delete()
-#         db.commit()
-#         logger.info(f"Cart cleared for user {user_id}.")
-#         return {"message": "Cart cleared"}
-#     except Exception as e:
-#         db.rollback()
-#         logger.error(f"Error clearing cart for user : {str(e)}")
-#         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")

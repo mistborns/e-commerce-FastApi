@@ -34,3 +34,8 @@ def forgot_password(request: schemas.ForgotPassword, db: Session = Depends(get_d
 def reset_password(data: schemas.ResetPassword, db: Session = Depends(get_db)):
     
     return services.reset_user_password(data, db)
+
+
+@router.post("/refresh", response_model=schemas.TokenResponse)
+def refresh_token(refresh_token: schemas.RefreshTokenRequest, db: Session = Depends(get_db)):
+    return services.refresh_access_token(refresh_token.token, db)

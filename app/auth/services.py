@@ -104,3 +104,34 @@ def reset_user_password(data: schemas.ResetPassword,db: Session, ) -> dict:
     except Exception as e:
         logger.error(f"Error resetting password: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+    
+def refresh_access_token(refresh_token: str, db: Session):
+    try:
+        payload = utils.decode_token(refresh_token)
+
+        if not payload:
+            logger.warning("Invalid refresh token: payload is None or invalid format")
+            raise HTTPException(status_code=401, detail="Invalid refresh token")
+
+        if payload.get("type") != "refresh":
+            raise HTTPException(status_code=401, detail="Invalid token type")
+
+        user_email = payload.get("sub")
+        user_role = payload.get("role")
+        if not user_email:
+            raise HTTPException(status_code=401, detail="Invalid token payload")
+
+        user = db.query(models.User).filter(models.User.email == user_email).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+
+        # Create a new access token
+        access_token = utils.create_access_token({"sub": user.email, "role": user_role})
+
+        return {"access_token": access_token, "token_type": "bearer"}
+    except HTTPException as http_exc:
+        raise http_exc
+    except Exception as e:
+        logger.error(f"error in using refresh token:{str(e)}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")

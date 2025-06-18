@@ -96,7 +96,7 @@ ECOM_FASTAPI/
     pip install -r requirements.txt
 
 4. **Set up environment variables**
-
+    ```bash
     create a .env file or configure app/core/config.py
 
 5. **Run the app**

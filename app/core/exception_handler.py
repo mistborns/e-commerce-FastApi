@@ -5,6 +5,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.core.logger import logger  
 
 async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    logger.error(f"Unhandled exception at {request.url}: {str(exc)}")
     return JSONResponse(
         status_code=exc.status_code,
         content={
