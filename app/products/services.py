@@ -6,7 +6,7 @@ from app.products import models, schemas
 from sqlalchemy import asc , desc
 from app.core.logger import logger
 
-
+# creates product
 def create_product(db: Session, product: schemas.ProductCreate):
     try:    #**obj.model_dump unpacks the dict and converts to kv pairs 
         db_product = models.Product(**product.model_dump()) # model_dump converts pydantic models to dict 
@@ -22,6 +22,7 @@ def create_product(db: Session, product: schemas.ProductCreate):
         logger.error(f"Error creating product: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
+# gets all products
 def get_products(db: Session, page: int = 1, limit: int = 10):
     try:
 
@@ -38,7 +39,9 @@ def get_products(db: Session, page: int = 1, limit: int = 10):
     except Exception as e:
         logger.error(f"Error fetching products: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+    
 
+# specific product by id 
 def get_product_by_Id(db: Session, product_id: int):
     try:
         product = db.query(models.Product).filter(models.Product.id == product_id).first()
@@ -52,6 +55,7 @@ def get_product_by_Id(db: Session, product_id: int):
         logger.error(f"Error fetching product {product_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
+# update product
 def update_product(db: Session, product_id: int, product_data: schemas.ProductUpdate):
     try:
         product = get_product_by_Id(db, product_id)
@@ -68,6 +72,7 @@ def update_product(db: Session, product_id: int, product_data: schemas.ProductUp
         logger.error(f"Error updating product {product_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
+# delete product
 def delete_product(db: Session, product_id: int):
     try:
         product = get_product_by_Id(db, product_id)
@@ -82,7 +87,8 @@ def delete_product(db: Session, product_id: int):
         db.rollback()
         logger.error(f"Error deleting product {product_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
-
+    
+# search products
 def search_products(db: Session, keyword: str):
     try:
         results = db.query(models.Product).filter(models.Product.name.ilike(f"%{keyword}%")).all()
@@ -98,6 +104,7 @@ def search_products(db: Session, keyword: str):
         logger.error(f"Error searching products with keyword '{keyword}': {str(e)}")
         raise HTTPException(status_code=500, detail="Error searching products")
 
+# filter diff prods
 def filter_products(db: Session, category: str = None, min_price: float = None, max_price: float = None,
                     sort_by: str = None, page: int = 1, page_size: int = 10):
     try:

@@ -9,7 +9,7 @@ def create_user(db: Session, user: schemas.UserCreate) -> dict:
     try:    
         db_user = db.query(models.User).filter(models.User.email == user.email).first()
         if db_user:
-            logger.warning(f"registering with existing email: {user.email}")
+            logger.warning(f"registering with existing email: {user.email}") #dupe email check
             raise HTTPException(status_code=400, detail="Email already registered")
         
         hashed_pwd = utils.hash_password(user.password)
@@ -21,7 +21,7 @@ def create_user(db: Session, user: schemas.UserCreate) -> dict:
         )
         db.add(new_user)
         db.commit()
-        db.refresh(new_user)
+        db.refresh(new_user)  # refresh for new values 
         logger.info(f"New user created: {user.email}")
         return new_user
     except HTTPException as http_exc:
@@ -34,7 +34,7 @@ def create_user(db: Session, user: schemas.UserCreate) -> dict:
 def authenticate_user(email: str, password: str, db: Session):
     try:    
         user = db.query(models.User).filter(models.User.email == email).first()
-        if not user or not utils.verify_password(password, user.hashed_password):
+        if not user or not utils.verify_password(password, user.hashed_password): #password/user check
             logger.warning(f"authentication fail for email: {email}")
             raise HTTPException(status_code=401, detail="Invalid email or password")
         
@@ -114,7 +114,7 @@ def refresh_access_token(refresh_token: str, db: Session):
             raise HTTPException(status_code=401, detail="Invalid refresh token")
 
         if payload.get("type") != "refresh":
-            raise HTTPException(status_code=401, detail="Invalid token type")
+            raise HTTPException(status_code=401, detail="Invalid token type") # token type check
 
         user_email = payload.get("sub")
         user_role = payload.get("role")

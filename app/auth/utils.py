@@ -48,9 +48,9 @@ def decode_token(token: str):
 def create_reset_token():
     return str(uuid.uuid4())
 
-
+# email sending function uses googles smtp to send mails 
 def send_reset_email(to_email: str, token: str):
-    reset_link = f"http://localhost:8000/reset-password?token={token}"
+    reset_link = f"http://localhost:8000/reset-password?token={token}" # dummy link basically / copy token from this
     msg = EmailMessage()
     msg['Subject'] = "Password Reset Request"
     msg['From'] = EMAIL_SENDER

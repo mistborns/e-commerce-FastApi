@@ -4,6 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.core.logger import logger  
 
+# catches raised http exceptions 
 async def http_exception_handler(request: Request, exc: StarletteHTTPException):
     logger.error(f"Unhandled exception at {request.url}: {str(exc)}")
     return JSONResponse(
@@ -15,6 +16,7 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException):
         },
     )
 
+# validation errors
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     logger.warning(f"Validation error at {request.url}: {exc.errors()}")
     return JSONResponse(
@@ -26,6 +28,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         },
     )
 
+# unhandled exceptions 
 async def unhandled_exception_handler(request: Request, exc: Exception):
     logger.error(f"Unhandled exception at {request.url}: {str(exc)}", exc_info=True)
     return JSONResponse(

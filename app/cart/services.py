@@ -5,22 +5,23 @@ from app.cart import models, schemas
 from app.products import models as product_models
 from app.core.logger import logger
 
-
+# adds item to cart 
 def add_to_cart(db : Session ,user_id : int, cart_item: schemas.CartItemCreate):
-    try:        
+    try:        # product is valid or not check
         check_product = db.query(product_models.Product).filter(product_models.Product.id == cart_item.product_id).first()
         if not check_product:
             logger.warning(f"Product with ID {cart_item.product_id}")
             raise HTTPException(status_code=404, detail="Product not found")
-        
+            # stock check 
         if check_product.stock == 0:
             logger.warning(f"Product with ID {cart_item.product_id} is out of stock")
             raise HTTPException(status_code=400, detail="Sorry!,  product out of stock")
-        
+            # quantity check , could actually merge with above check
         if cart_item.quantity > check_product.stock:
             logger.warning(f"Requested quantity {cart_item.quantity} exceeds stock for product {cart_item.product_id}.")
             raise HTTPException(status_code= status.HTTP_400_BAD_REQUEST , detail="quantity not available in stock")
         
+        # if product already exists 
         existing = db.query(models.Cart).filter(models.Cart.user_id==user_id, models.Cart.product_id == cart_item.product_id).first()
         if existing:
             existing.quantity += cart_item.quantity
@@ -29,7 +30,7 @@ def add_to_cart(db : Session ,user_id : int, cart_item: schemas.CartItemCreate):
             logger.info(f"increased quantity of {cart_item.product_id} in {user_id}'s cart.")
             return existing
         else:
-            new_item = models.Cart(
+            new_item = models.Cart(  # create the cart item object
                 user_id=user_id,
                 product_id=cart_item.product_id,
                 quantity=cart_item.quantity
@@ -46,6 +47,8 @@ def add_to_cart(db : Session ,user_id : int, cart_item: schemas.CartItemCreate):
         logger.error(f"Error adding to cart : {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
+
+# return all cart items for user
 def get_cart_items(db: Session ,user_id: int):
     try:    
         cart_items = db.query(models.Cart).filter(models.Cart.user_id == user_id).all()
@@ -65,6 +68,7 @@ def get_cart_items(db: Session ,user_id: int):
 
 
 
+# update an item by givin prod id
 def update_cart_item(db: Session, user_id: int, product_id: int, data: schemas.CartItemUpdate):
     try:
         product = db.query(product_models.Product).filter(product_models.Product.id == product_id).first()
@@ -93,8 +97,8 @@ def update_cart_item(db: Session, user_id: int, product_id: int, data: schemas.C
         logger.error(f"Error updating cart item : {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
-# if cart item is deleted shouldnt the product quantity be updated 
 
+# delete the item
 def delete_cart_item(db: Session, user_id: int, product_id: int):
     try:
         item = db.query(models.Cart).filter_by(user_id=user_id, product_id=product_id).first()

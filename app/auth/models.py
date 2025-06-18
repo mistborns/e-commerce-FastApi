@@ -3,10 +3,12 @@ from app.core.database import Base
 import enum
 from sqlalchemy.orm import relationship
 
+# role enum
 class UserRole(str, enum.Enum):
     admin = "admin"
     user = "user"
 
+# user table
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, index=True)
@@ -18,7 +20,7 @@ class User(Base):
     password_reset_tokens = relationship("PasswordResetToken", back_populates="user")
 
 
-
+# reset token table
 class PasswordResetToken(Base):
     __tablename__ = "password_reset_tokens"
 

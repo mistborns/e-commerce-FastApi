@@ -12,6 +12,7 @@ class UserCreate(BaseModel):
     password: str = Field(..., min_length=8)
     role: UserRole = UserRole.user
 
+    # password strength check 
     @field_validator("password")
     def strong_password(cls, value):
         if not re.search(r"[A-Z]", value):

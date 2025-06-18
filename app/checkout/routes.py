@@ -11,10 +11,12 @@ from app.core.logger import logger
 
 router = APIRouter(prefix="/checkout", tags=["Checkout"])
 
+
+# checkout route
 @router.post("")
 def checkout(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     try:
-        cart_items = db.query(cart_models.Cart).filter_by(user_id=current_user.id).all()
+        cart_items = db.query(cart_models.Cart).filter_by(user_id=current_user.id).all() # gets item list
         if not cart_items:
             logger.info(f"User {current_user.id} attempted checkout with empty cart.")
             raise HTTPException(status_code=400, detail="Cart is empty")
@@ -22,14 +24,14 @@ def checkout(db: Session = Depends(get_db), current_user=Depends(get_current_use
         total = 0
         order_items = []
 
-        for item in cart_items:
+        for item in cart_items: # iterating through every product
             product = db.query(product_models.Product).filter_by(id=item.product_id).first()
             if not product or product.stock < item.quantity:
                 logger.warning(f"Checkout failed for user {current_user.id},products out of stock")
                 raise HTTPException(status_code=400, detail=f"Product {item.product_id} is unavailable or out of stock")
 
             total += product.price * item.quantity
-            product.stock -= item.quantity
+            product.stock -= item.quantity # decreases product quantity after checkout only 
 
             order_items.append(order_models.OrderItem(
                 product_id=item.product_id,
@@ -44,7 +46,7 @@ def checkout(db: Session = Depends(get_db), current_user=Depends(get_current_use
             items=order_items
         )
         db.add(order)
-        db.query(cart_models.Cart).filter_by(user_id=current_user.id).delete()
+        db.query(cart_models.Cart).filter_by(user_id=current_user.id).delete() # deletes the user cart 
         db.commit()
 
         logger.info(f"User {current_user.id} placed order {order.id} successfully.")
