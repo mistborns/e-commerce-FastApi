@@ -23,3 +23,5 @@ Thumbs.db
 # Python virtual environment (if created inside project)
 venv/
 env/
+
+logs/
